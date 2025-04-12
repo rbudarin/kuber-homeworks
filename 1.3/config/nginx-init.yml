@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: init-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: init-Deployment
+  template:
+    metadata:
+      labels:
+        app: init-Deployment
+    spec:
+      containers:
+        - name: deploy-nginx
+          image: nginx:1.14.2
+          ports:
+          - containerPort: 80
+      initContainers:
+        - name    : delay
+          image   : busybox:latest
+          command: ['sleep', '30']
