@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: init-Deployment
+      app: deploy-nginx
   template:
     metadata:
       labels:
-        app: init-Deployment
+        app: deploy-nginx
     spec:
       containers:
         - name: deploy-nginx
@@ -21,3 +21,16 @@ spec:
         - name    : delay
           image   : busybox:latest
           command: ['sleep', '30']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deploy-nginx-svc
+spec:
+  selector:
+    app: deploy-nginx
+  ports:
+  - name: nginx-listener
+    port: 8080
+    protocol: TCP
+    targetPort: 80
