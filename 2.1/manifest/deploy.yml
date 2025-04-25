@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-volume
+  template:
+    metadata:
+      labels:
+        app: backend-volume
+    spec:
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+      containers:
+        - name: busybox
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - >
+              while true;
+              do echo "$(date) - Data written by busybox" >> /data/shared-file.txt;
+              sleep 5;
+              done;
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+        - name: multitool
+          image: wbitt/network-multitool:latest
+          command:
+            - /bin/sh
+            - -c
+            - >
+              while true;
+              do cat /data/shared-file.txt;
+              sleep 5;
+              done;
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
